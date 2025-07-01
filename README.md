@@ -1,35 +1,36 @@
-```markdown
-# 🎯 Crowdfunding Backend
+````markdown
+🎯 Crowdfunding Backend
 
-This repository contains the backend code for the **Crowdfunding Project**, built using **Django** and **Django REST Framework**.  
-It provides API endpoints and core business logic for managing users and crowdfunding campaigns.
+A backend system for a crowdfunding platform, built with Django and Django REST Framework.  
+It provides secure APIs for managing users, campaigns, and administrative tasks.
+
+
+📁 Project Structure
+
+CROWDFUNDING_BACKEND/
+├── campaigns/           # Campaign app (models, serializers, views)
+├── users/               # User management & authentication
+├── crowdfunding/        # Project settings and URLs
+├── ERD.drawio           # Entity Relationship Diagram
+├── manage.py            # Django CLI entry point
+├── requirements.txt     # Python dependencies
+├── .gitignore           # Git ignored files
+└── README.md            # Project documentation
+````
 
 ---
 
-## 📁 Project Structure
-```
+## 📦 Responsibilities by Folder
 
-CROWDFUNDING_BACKEND/
-├── campaigns/ # App for crowdfunding campaign logic (models, views, serializers, etc.)
-├── users/ # App for user management and authentication
-├── crowdfunding/ # Project configuration, settings, URLs
-├── ERD.drawio # Entity Relationship Diagram for the database
-├── manage.py # Django management script
-├── requirements.txt # Python dependencies
-├── .gitignore # Git ignore rules
-└── README.md # Project documentation
-
-````
-
-### 📦 Responsibilities
-
-- `campaigns/` – Handles all logic related to crowdfunding campaigns (CRUD, APIs, business logic).
-- `users/` – Manages user registration, authentication, and profile data.
-- `crowdfunding/` – Root project folder with settings, environment config, and URLs.
-- `ERD.drawio` – Database schema in visual format.
-- `requirements.txt` – Lists all required Python packages.
-- `.gitignore` – Files and folders excluded from Git versioning.
-- `manage.py` – CLI tool for running Django commands.
+| Folder/File        | Responsibility                                         |
+| ------------------ | ------------------------------------------------------ |
+| `campaigns/`       | Crowdfunding campaign logic (CRUD, serializers, views) |
+| `users/`           | User registration, JWT login, profile                  |
+| `crowdfunding/`    | Django settings, app configs, URL routing              |
+| `ERD.drawio`       | Database schema diagram                                |
+| `manage.py`        | Django management commands                             |
+| `requirements.txt` | Python packages list                                   |
+| `.gitignore`       | Files/folders excluded from version control            |
 
 ---
 
@@ -37,26 +38,27 @@ CROWDFUNDING_BACKEND/
 
 ### ✅ Prerequisites
 
-- Python 3.8+
-- PostgreSQL
-- Virtual environment tool (`venv` or `virtualenv`)
-- Git
+* Python 3.8+
+* PostgreSQL
+* Git
+* Virtual environment tool (`venv` or `virtualenv`)
+
+---
 
 ### ⚙️ Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/Mohamedelwali/crowdfunding_backend.git
    cd crowdfunding_backend
-````
-
-````
+   ```
 
 2. **Create and activate a virtual environment**
 
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   source venv/bin/activate       # On Windows: venv\Scripts\activate
    ```
 
 3. **Install dependencies**
@@ -67,11 +69,11 @@ CROWDFUNDING_BACKEND/
 
 4. **Configure environment variables**
 
-   - Create a `.env` file if using [python-dotenv](https://pypi.org/project/python-dotenv/).
-   - Add your secret key and DB credentials.
-   - Ensure `crowdfunding/settings.py` reads from `.env`.
+   * Create a `.env` file in the root directory.
+   * Add your secret key and database settings.
+   * Make sure `crowdfunding/settings.py` reads the `.env` file.
 
-5. **Apply migrations**
+5. **Apply database migrations**
 
    ```bash
    python manage.py migrate
@@ -93,11 +95,11 @@ CROWDFUNDING_BACKEND/
 
 ## 🛠️ Features
 
-- ✅ JWT-based user authentication (login, register, profile)
-- ✅ Full CRUD for crowdfunding campaigns
-- ✅ PostgreSQL database integration
-- ✅ Admin panel via Django admin
-- ✅ RESTful API endpoints
+* 🔐 JWT-based authentication (register, login, profile)
+* 📦 Campaign creation, listing, editing, and deletion
+* 🗄️ PostgreSQL database integration
+* 🧑‍💻 Django admin panel
+* 📡 RESTful API architecture
 
 ---
 
@@ -111,54 +113,46 @@ python manage.py test
 
 ## 🤝 Contributing
 
-1. Fork the repository.
-2. Create your feature branch:
+1. **Fork** the repository
+2. **Create** your feature branch
 
    ```bash
    git checkout -b feature/your-feature
    ```
-
-3. Commit your changes:
+3. **Commit** your changes
 
    ```bash
-   git commit -m "Add your feature"
+   git commit -m "Add new feature"
    ```
-
-4. Push to your branch:
+4. **Push** to GitHub
 
    ```bash
    git push origin feature/your-feature
    ```
-
-5. Open a Pull Request.
+5. **Open a Pull Request** 🚀
 
 ---
 
 ## 🛡️ License
 
-This project is licensed under the **MIT License**.
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
 ---
 
 ## 📞 Contact
 
-For questions or suggestions, contact the team:
-
-- **Mohamed Elwaly** – [mnoaman162@gmail.com](mailto:mnoaman162@gmail.com)
-- **Ziad Ramzy** – [ziadramzy2@gmail.com](mailto:ziadramzy2@gmail.com)
-- **Hassan Amer** – [hassanamer46@gmail.com](mailto:hassanamer46@gmail.com)
-- **Shimaa Nasser** – _(email not provided)_
-- **Ahmed Mohamed Eid** – _(email not provided)_
+* **Mohamed Elwaly** – [mnoaman162@gmail.com](mailto:mnoaman162@gmail.com)
+* **Ziad Ramzy** – [ziadramzy2@gmail.com](mailto:ziadramzy2@gmail.com)
+* **Hassan Amer** – [hassanamer46@gmail.com](mailto:hassanamer46@gmail.com)
+* **Shimaa Nasser** – *(Email not provided)*
+* **Ahmed Mohamed Eid** – *(Email not provided)*
 
 ---
 
 ## 📚 References
 
-- [Django Documentation](https://docs.djangoproject.com/en/stable/)
-- [Django REST Framework](https://www.django-rest-framework.org/)
-- [PostgreSQL Docs](https://www.postgresql.org/docs/)
+* [Django Documentation](https://docs.djangoproject.com/en/stable/)
+* [Django REST Framework](https://www.django-rest-framework.org/)
+* [PostgreSQL Docs](https://www.postgresql.org/docs/)
 
 ```
-
-```
-````
