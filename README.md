@@ -1,5 +1,3 @@
-Here's a **cleaned-up and well-organized version** of your `README.md` file for the **Crowdfunding Backend** project. I've improved the formatting, markdown syntax, spacing, and clarity, while keeping your original structure and intent:
-
 ---
 
 ```markdown
@@ -11,6 +9,7 @@ It provides API endpoints and core business logic for managing users and crowdfu
 ---
 
 ## 📁 Project Structure
+
 ```
 
 CROWDFUNDING_BACKEND/
@@ -23,7 +22,7 @@ CROWDFUNDING_BACKEND/
 ├── .gitignore # Git ignore rules
 └── README.md # Project documentation
 
-````
+```
 
 ### 📦 Responsibilities
 
@@ -52,6 +51,8 @@ CROWDFUNDING_BACKEND/
    ```bash
    git clone https://github.com/Mohamedelwali/crowdfunding_backend.git
    cd crowdfunding_backend
+   ```
+
 ````
 
 2. **Create and activate a virtual environment**
@@ -163,3 +164,4 @@ For questions or suggestions, contact the team:
 ```
 
 ```
+````
