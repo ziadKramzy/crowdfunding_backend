@@ -1,24 +1,28 @@
-````markdown
-🎯 Crowdfunding Backend
+# 🎯 Crowdfunding Backend
 
-A backend system for a crowdfunding platform, built with Django and Django REST Framework.  
-It provides secure APIs for managing users, campaigns, and administrative tasks.
+A robust backend system for a crowdfunding platform, built with **Django** and **Django REST Framework**.  
+This project provides secure APIs for managing users, campaigns, and administrative tasks.
 
+## 🚀 Features
 
-📁 Project Structure
+- **User Management:** Registration, authentication, and profile management
+- **Campaign Management:** Create, update, and track crowdfunding campaigns
+- **RESTful APIs:** Secure endpoints for all core operations
+- **Admin Tools:** Administrative controls for platform management
 
+## 🗂️ Project Structure
+
+```plaintext
 CROWDFUNDING_BACKEND/
-├── campaigns/           # Campaign app (models, serializers, views)
-├── users/               # User management & authentication
-├── crowdfunding/        # Project settings and URLs
-├── ERD.drawio           # Entity Relationship Diagram
-├── manage.py            # Django CLI entry point
-├── requirements.txt     # Python dependencies
-├── .gitignore           # Git ignored files
-└── README.md            # Project documentation
-````
-
----
+├── campaigns/         # Campaign app (models, serializers, views)
+├── users/             # User management & authentication
+├── crowdfunding/      # Project settings and URLs
+├── ERD.drawio         # Entity Relationship Diagram
+├── manage.py          # Django CLI entry point
+├── requirements.txt   # Python dependencies
+├── .gitignore         # Git ignored files
+└── README.md          # Project documentation
+```
 
 ## 📦 Responsibilities by Folder
 
@@ -154,5 +158,3 @@ This project is licensed under the [MIT License](https://opensource.org/licenses
 * [Django Documentation](https://docs.djangoproject.com/en/stable/)
 * [Django REST Framework](https://www.django-rest-framework.org/)
 * [PostgreSQL Docs](https://www.postgresql.org/docs/)
-
-```
