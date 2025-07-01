@@ -1,5 +1,3 @@
----
-
 ```markdown
 # 🎯 Crowdfunding Backend
 
@@ -9,7 +7,6 @@ It provides API endpoints and core business logic for managing users and crowdfu
 ---
 
 ## 📁 Project Structure
-
 ```
 
 CROWDFUNDING_BACKEND/
@@ -22,7 +19,7 @@ CROWDFUNDING_BACKEND/
 ├── .gitignore # Git ignore rules
 └── README.md # Project documentation
 
-```
+````
 
 ### 📦 Responsibilities
 
@@ -51,7 +48,7 @@ CROWDFUNDING_BACKEND/
    ```bash
    git clone https://github.com/Mohamedelwali/crowdfunding_backend.git
    cd crowdfunding_backend
-   ```
+````
 
 ````
 
