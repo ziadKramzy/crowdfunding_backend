@@ -24,15 +24,22 @@ def get_project(request, pk):
         return Response({'error': 'Campaign not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
+
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_project(request, pk):
     try:
         campaign = Campaign.objects.get(pk=pk)
-        campaign.delete()
-        return Response({'message': 'Campaign deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
     except Campaign.DoesNotExist:
         return Response({'error': 'Campaign not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if campaign.owner != request.user:
+        return Response({'error': 'Not authorized to delete this campaign.'}, status=status.HTTP_403_FORBIDDEN)
+
+    campaign.delete()
+    return Response({'message': 'Campaign deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -44,3 +51,20 @@ def create_project(request):
     else:
         return Response(data={'msg': 'Failed to create Campaign', 'errors': obj.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_campaign(request, pk):
+    try:
+        campaign = Campaign.objects.get(pk=pk)
+    except Campaign.DoesNotExist:
+        return Response({'detail': 'Campaign not found.'}, status=status.HTTP_404_NOT_FOUND)
+    if campaign.owner != request.user:
+        return Response({'detail': 'Not authorized to update this campaign.'}, status=status.HTTP_403_FORBIDDEN)
+
+    serializer = CampaignSerializer(campaign, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
