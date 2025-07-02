@@ -51,6 +51,7 @@ def create_project(request):
     else:
         return Response(data={'msg': 'Failed to create Campaign', 'errors': obj.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def update_campaign(request, pk):
