@@ -4,8 +4,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from campaigns.models import Campaign
 from campaigns.serializers import CampaignSerializer
+from datetime import datetime
+from django.utils import timezone
 
 
+
+def get_today():
+    return timezone.now().date()
 
 @api_view(['GET'])
 def list_all_projects(request):
@@ -47,6 +52,18 @@ def create_project(request):
     obj = CampaignSerializer(data=request.data, context={'request': request})
     target_amount = request.data.get('target_amount')
 
+    start_str = request.data.get('start_date')
+    end_str = request.data.get('end_date')
+
+    try:
+        start_date = datetime.strptime(start_str, "%Y-%m-%d").date() if start_str else get_today()
+        end_date = datetime.strptime(end_str, "%Y-%m-%d").date() if end_str else None
+    except ValueError:
+        return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=400)
+
+    if end_date and end_date < start_date:
+        return Response({"error": "End date cannot be before start date."}, status=400)
+
     if target_amount is not None:
         if float(target_amount) < 0:
             return Response({'Error': 'Target amount cannot be negative'}, status=status.HTTP_403_FORBIDDEN)
@@ -70,6 +87,17 @@ def update_campaign(request, pk):
     serializer = CampaignSerializer(campaign, data=request.data, partial=True)
 
     target_amount = request.data.get('target_amount')
+    start_str = request.data.get('start_date')
+    end_str = request.data.get('end_date')
+
+    try:
+        start_date = datetime.strptime(start_str, "%Y-%m-%d").date() if start_str else campaign.start_date
+        end_date = datetime.strptime(end_str, "%Y-%m-%d").date() if end_str else campaign.end_date
+    except ValueError:
+        return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=400)
+
+    if end_date and start_date and end_date < start_date:
+        return Response({"error": "End date cannot be before start date."}, status=400)
 
     if target_amount is not None:
         if float(target_amount) < 0:
