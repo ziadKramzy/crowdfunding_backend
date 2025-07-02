@@ -1,3 +1,4 @@
+from django.db.models import F
 from rest_framework.decorators import api_view , permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -108,3 +109,42 @@ def update_campaign(request, pk):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def search_campaigns(request):
+    start_str = request.GET.get('start')
+    end_str = request.GET.get('end')
+    title_query = request.GET.get('title')
+    sort_field = request.GET.get('sort', 'start_date')
+    sort_order = request.GET.get('order', 'asc')
+
+    try:
+        start_date = datetime.strptime(start_str, "%Y-%m-%d").date() if start_str else None
+        end_date = datetime.strptime(end_str, "%Y-%m-%d").date() if end_str else None
+    except ValueError:
+        return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Base queryset
+    campaigns = Campaign.objects.all()
+
+    # Exclude logically invalid campaigns: end < start
+    campaigns = campaigns.filter(end_date__gte=F('start_date'))
+
+    # Filter by date range
+    if start_date:
+        campaigns = campaigns.filter(start_date__gte=start_date)
+    if end_date:
+        campaigns = campaigns.filter(end_date__lte=end_date)
+
+    # Optional title search (case-insensitive)
+    if title_query:
+        campaigns = campaigns.filter(title__icontains=title_query)
+
+    # Sorting
+    if sort_order == 'desc':
+        sort_field = f'-{sort_field}'
+    campaigns = campaigns.order_by(sort_field)
+
+    # Serialize results
+    serialized = CampaignSerializer(campaigns, many=True)
+    return Response(serialized.data, status=status.HTTP_200_OK)
