@@ -45,9 +45,15 @@ def delete_project(request, pk):
 @permission_classes([IsAuthenticated])
 def create_project(request):
     obj = CampaignSerializer(data=request.data, context={'request': request})
+    target_amount = request.data.get('target_amount')
+
+    if target_amount is not None:
+        if float(target_amount) < 0:
+            return Response({'Error': 'Target amount cannot be negative'}, status=status.HTTP_403_FORBIDDEN)
+    
     if obj.is_valid():
         obj.save()
-        return Response(data={'msg': 'Campaign created successfully'}, status=status.HTTP_201_CREATED)
+        return Response(data={'msg': 'Campaign created successfully', 'Campaign': obj.data }, status=status.HTTP_201_CREATED)
     else:
         return Response(data={'msg': 'Failed to create Campaign', 'errors': obj.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -62,6 +68,12 @@ def update_campaign(request, pk):
         return Response({'detail': 'Not authorized to update this campaign.'}, status=status.HTTP_403_FORBIDDEN)
 
     serializer = CampaignSerializer(campaign, data=request.data, partial=True)
+
+    target_amount = request.data.get('target_amount')
+
+    if target_amount is not None:
+        if float(target_amount) < 0:
+            return Response({'Error': 'Target amount cannot be negative'}, status=status.HTTP_403_FORBIDDEN)
 
     if serializer.is_valid():
         serializer.save()
