@@ -11,5 +11,6 @@ urlpatterns = [
     path('projects/<int:pk>/delete/', delete_project ),
     path('projects/create/', create_project),
     path('projects/<int:pk>/update/', update_campaign ),
+    path('projects/<int:pk>/donate/', donate_campaign ),
     path('projects/search/', search_campaigns),
 ]
