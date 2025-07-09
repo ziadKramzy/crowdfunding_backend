@@ -11,6 +11,9 @@ from .models import Campaign
 #     owner = serializers.IntegerField()
         
 class CampaignSerializer(serializers.ModelSerializer):
+
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Campaign
         fields = '__all__'
@@ -19,4 +22,9 @@ class CampaignSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['owner'] = self.context['request'].user
         return super().create(validated_data)
+    
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.build_url()  # full Cloudinary URL
+        return None
     

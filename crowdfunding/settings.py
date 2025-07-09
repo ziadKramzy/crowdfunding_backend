@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import cloudinary
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
+    'cloudinary',
     'django.contrib.staticfiles',
     'users',
     'campaigns',
@@ -63,6 +67,21 @@ SIMPLE_JWT = {
 }
 # 
 
+cloudinary.config(
+    cloud_name='ddtp8tqvv',
+    api_key='272766425297671',
+    api_secret='o44U57Jmn3Rjtz_N2SDrpS7Mow0'
+)
+
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'ddtp8tqvv',
+    'API_KEY': '272766425297671',
+    'API_SECRET': 'o44U57Jmn3Rjtz_N2SDrpS7Mow0',
+}
+
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 MIDDLEWARE = [

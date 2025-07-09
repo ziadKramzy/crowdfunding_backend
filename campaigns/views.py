@@ -1,12 +1,13 @@
 from django.db.models import F
-from rest_framework.decorators import api_view , permission_classes
+from rest_framework.decorators import api_view , permission_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status,parsers
 from campaigns.models import Campaign
 from campaigns.serializers import CampaignSerializer
 from datetime import datetime
 from django.utils import timezone
+from decimal import Decimal
 
 
 
@@ -48,6 +49,7 @@ def delete_project(request, pk):
 
 
 @api_view(['POST'])
+@parser_classes([parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser])
 @permission_classes([IsAuthenticated])
 def create_project(request):
     obj = CampaignSerializer(data=request.data, context={'request': request})
@@ -76,7 +78,9 @@ def create_project(request):
         return Response(data={'msg': 'Failed to create Campaign', 'errors': obj.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
 @api_view(['PUT'])
+@parser_classes([parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser])
 @permission_classes([IsAuthenticated])
 def update_campaign(request, pk):
     try:
@@ -125,23 +129,18 @@ def search_campaigns(request):
     except ValueError:
         return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Base queryset
     campaigns = Campaign.objects.all()
 
-    # Exclude logically invalid campaigns: end < start
     campaigns = campaigns.filter(end_date__gte=F('start_date'))
 
-    # Filter by date range
     if start_date:
         campaigns = campaigns.filter(start_date__gte=start_date)
     if end_date:
         campaigns = campaigns.filter(end_date__lte=end_date)
 
-    # Optional title search (case-insensitive)
     if title_query:
         campaigns = campaigns.filter(title__icontains=title_query)
 
-    # Sorting
     if sort_order == 'desc':
         sort_field = f'-{sort_field}'
     campaigns = campaigns.order_by(sort_field)
@@ -149,3 +148,32 @@ def search_campaigns(request):
     # Serialize results
     serialized = CampaignSerializer(campaigns, many=True)
     return Response(serialized.data, status=status.HTTP_200_OK)
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def donate_campaign(request, pk):
+    try:
+        campaign = Campaign.objects.get(pk=pk)
+    except Campaign.DoesNotExist:
+        return Response({'error': 'Campaign not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    amount = request.data.get('amount')
+
+    if amount is None:
+        return Response({'error': 'Amount is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        amount = Decimal(amount)
+    except ValueError:
+        return Response({'error': 'Amount must be a number.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if amount <= 0:
+        return Response({'error': 'Amount must be positive.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    campaign.amount_raised = campaign.amount_raised + amount
+    campaign.save()
+
+    serializer = CampaignSerializer(campaign)
+    return Response({'message': 'Donation received', 'campaign': serializer.data}, status=status.HTTP_200_OK)
