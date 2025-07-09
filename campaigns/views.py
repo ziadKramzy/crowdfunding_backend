@@ -1,4 +1,4 @@
-from django.db.models import F
+from django.db.models import Q, F
 from rest_framework.decorators import api_view , permission_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -115,6 +115,7 @@ def update_campaign(request, pk):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 def search_campaigns(request):
     start_str = request.GET.get('start')
@@ -123,31 +124,47 @@ def search_campaigns(request):
     sort_field = request.GET.get('sort', 'start_date')
     sort_order = request.GET.get('order', 'asc')
 
-    try:
-        start_date = datetime.strptime(start_str, "%Y-%m-%d").date() if start_str else None
-        end_date = datetime.strptime(end_str, "%Y-%m-%d").date() if end_str else None
-    except ValueError:
-        return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+    def parse_date(date_str):
+        try:
+            return datetime.strptime(date_str, "%d-%m-%Y").date()
+        except (ValueError, TypeError):
+            return None
+
+    start_date = parse_date(start_str)
+    end_date = parse_date(end_str)
+
+    if (start_str and not start_date) or (end_str and not end_date):
+        return Response({"error": "Invalid date format. Use DD-MM-YYYY."}, status=status.HTTP_400_BAD_REQUEST)
 
     campaigns = Campaign.objects.all()
-
-    campaigns = campaigns.filter(end_date__gte=F('start_date'))
 
     if start_date:
         campaigns = campaigns.filter(start_date__gte=start_date)
     if end_date:
         campaigns = campaigns.filter(end_date__lte=end_date)
-
     if title_query:
-        campaigns = campaigns.filter(title__icontains=title_query)
+        campaigns = campaigns.filter(
+            Q(title__icontains=title_query) |
+            Q(description__icontains=title_query)
+        )
 
+    # Only keep logically valid campaigns
+    campaigns = campaigns.filter(end_date__gte=F('start_date'))
+
+    # Validate sort field
+    allowed_sort_fields = ['title', 'start_date', 'end_date', 'amount_raised', 'target_amount']
+    raw_sort_field = sort_field
     if sort_order == 'desc':
         sort_field = f'-{sort_field}'
+    if sort_field.lstrip('-') not in allowed_sort_fields:
+        return Response({"error": f"Invalid sort field: '{raw_sort_field}'"}, status=status.HTTP_400_BAD_REQUEST)
+
     campaigns = campaigns.order_by(sort_field)
 
-    # Serialize results
-    serialized = CampaignSerializer(campaigns, many=True)
-    return Response(serialized.data, status=status.HTTP_200_OK)
+    serializer = CampaignSerializer(campaigns, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
 
 
