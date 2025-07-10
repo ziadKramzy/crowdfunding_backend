@@ -118,51 +118,28 @@ def update_campaign(request, pk):
 
 @api_view(['GET'])
 def search_campaigns(request):
-    start_str = request.GET.get('start')
-    end_str = request.GET.get('end')
-    title_query = request.GET.get('title')
-    sort_field = request.GET.get('sort', 'start_date')
-    sort_order = request.GET.get('order', 'asc')
-
-    def parse_date(date_str):
-        try:
-            return datetime.strptime(date_str, "%Y-%m-%d").date()  # <-- Here is the change
-        except (ValueError, TypeError):
-            return None
-
-    start_date = parse_date(start_str)
-    end_date = parse_date(end_str)
-
-    if (start_str and not start_date) or (end_str and not end_date):
-        return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+    title = request.GET.get('title', '')
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
 
     campaigns = Campaign.objects.all()
+    if title:
+        campaigns = campaigns.filter(title__icontains=title)
 
-    if start_date:
-        campaigns = campaigns.filter(start_date__gte=start_date)
-    if end_date:
-        campaigns = campaigns.filter(end_date__lte=end_date)
-    if title_query:
-        campaigns = campaigns.filter(
-            Q(title__icontains=title_query) 
-            # | Q(description__icontains=title_query)
-        )
+    try:
+        if start_date:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            campaigns = campaigns.filter(start_date__gte=start_date)
 
-    # Only keep logically valid campaigns
-    campaigns = campaigns.filter(end_date__gte=F('start_date'))
-
-    # Validate sort field
-    allowed_sort_fields = ['title', 'start_date', 'end_date', 'amount_raised', 'target_amount']
-    raw_sort_field = sort_field
-    if sort_order == 'desc':
-        sort_field = f'-{sort_field}'
-    if sort_field.lstrip('-') not in allowed_sort_fields:
-        return Response({"error": f"Invalid sort field: '{raw_sort_field}'"}, status=status.HTTP_400_BAD_REQUEST)
-
-    campaigns = campaigns.order_by(sort_field)
+        if end_date:
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+            campaigns = campaigns.filter(end_date__lte=end_date)
+    except ValueError:
+        return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
 
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 @api_view(['POST'])
