@@ -144,8 +144,8 @@ def search_campaigns(request):
         campaigns = campaigns.filter(end_date__lte=end_date)
     if title_query:
         campaigns = campaigns.filter(
-            Q(title__icontains=title_query) |
-            Q(description__icontains=title_query)
+            Q(title__icontains=title_query) 
+            # | Q(description__icontains=title_query)
         )
 
     # Only keep logically valid campaigns
