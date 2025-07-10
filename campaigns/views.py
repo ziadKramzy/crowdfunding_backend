@@ -126,7 +126,7 @@ def search_campaigns(request):
 
     def parse_date(date_str):
         try:
-            return datetime.strptime(date_str, "%d-%m-%Y").date()
+            return datetime.strptime(date_str, "%Y-%m-%d").date()  # <-- Here is the change
         except (ValueError, TypeError):
             return None
 
@@ -134,7 +134,7 @@ def search_campaigns(request):
     end_date = parse_date(end_str)
 
     if (start_str and not start_date) or (end_str and not end_date):
-        return Response({"error": "Invalid date format. Use DD-MM-YYYY."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
     campaigns = Campaign.objects.all()
 
@@ -163,9 +163,6 @@ def search_campaigns(request):
 
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
 
 
 @api_view(['POST'])
