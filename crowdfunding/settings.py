@@ -22,13 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+import os
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-u^#62lbz04r+kr=hhn(34w$6o##$!@3-3y=_0^0e!1ps^_yh3k'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'insecure-key-for-dev-only')  # Set DJANGO_SECRET_KEY in Railway variables
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'  # Set DJANGO_DEBUG to False in Railway variables
 
-ALLOWED_HOSTS = []
+# Add your Railway domain or custom domain in Railway variables
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -96,9 +99,10 @@ MIDDLEWARE = [
     
 ]
 
-
-CORS_ALLOW_ALL_ORIGINS = True
-
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "https://6871ea1a450be00008ffd417--guileless-cucurucho-6b4a5d.netlify.app",
+]
 
 ROOT_URLCONF = 'crowdfunding.urls'
 
@@ -133,15 +137,14 @@ WSGI_APPLICATION = 'crowdfunding.wsgi.application'
 #         'PORT': '5432',
 #     }
 # }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'TuHEhAdEdUgVrwUwmyaNcoTLQLilcCiF',
-        'HOST': 'mainline.proxy.rlwy.net',
-        'PORT': '45438',
+        'NAME': os.environ.get('POSTGRES_DB', 'default_db_name'),
+        'USER': os.environ.get('POSTGRES_USER', 'default_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'default_password'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 
@@ -181,7 +184,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
